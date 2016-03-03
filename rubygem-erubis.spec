@@ -8,7 +8,7 @@
 Summary: A fast and extensible eRuby implementation
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Version: 2.7.0
-Release: 11%{?dist}
+Release: 12%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.kuwata-lab.com/erubis/
@@ -28,7 +28,7 @@ Requires: %{?scl_prefix_ruby}ruby(rubygems)
 Requires: %{?scl_prefix_ruby}ruby(release)
 BuildRequires: %{?scl_prefix_ruby}rubygems-devel
 BuildRequires: %{?scl_prefix_ruby}ruby(release)
-BuildRequires: %{?scl_prefix_ruby}rubygem(minitest)
+BuildRequires: %{?scl_prefix_ruby}rubygem(test-unit)
 BuildArch: noarch
 Provides: %{?scl_prefix}rubygem(%{gem_name}) = %{version}
 
@@ -76,6 +76,7 @@ find %{buildroot}%{gem_instdir}/benchmark -type f | \
   xargs -n 1 sed -i  -e '/^#!\/usr\/bin\/env ruby/d'
 
 %check
+%{?scl:scl enable %{scl} - << \EOF}
 export GEM_PATH=%{buildroot}%{gem_dir}:%{gem_dir}
 export PATH=%{buildroot}%{_bindir}:$PATH
 
@@ -93,12 +94,9 @@ mv test/data/users-guide/{E,e}xample.ejava
 # https://github.com/test-unit/test-unit/issues/92
 sed -i '/^  def test_untabify2/,/^  end$/ s/^/#/' test/test-main.rb
 
-%{?scl:scl enable %{scl} - << \EOF}
-# Tests require test-unit which was removed in Ruby 2.2
-# https://www.ruby-lang.org/en/news/2014/12/25/ruby-2-2-0-released/
-#ruby -I.:lib -e "Dir.glob('./test/test-*.rb').each {|t| require t}"
-%{?scl:EOF}
+ruby -I.:lib -e "Dir.glob('./test/test-*.rb').each {|t| require t}"
 popd
+%{?scl:EOF}
 
 %files
 %{_bindir}/erubis
@@ -130,6 +128,9 @@ popd
 %{gem_docdir}
 
 %changelog
+* Tue Feb 23 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-12
+- Enable tests
+
 * Mon Feb 22 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-11
 - Rebuilt for rh-ror42
 
