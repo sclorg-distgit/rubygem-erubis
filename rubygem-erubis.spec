@@ -8,7 +8,7 @@
 Summary: A fast and extensible eRuby implementation
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Version: 2.7.0
-Release: 12%{?dist}
+Release: 13%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.kuwata-lab.com/erubis/
@@ -66,14 +66,12 @@ mkdir -p %{buildroot}%{_bindir}
 cp -a .%{gem_dir}/* %{buildroot}%{gem_dir}/
 cp -a .%{_bindir}/* %{buildroot}%{_bindir}/
 
-
 find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
-find %{buildroot}%{gem_instdir}/{bin,contrib} -type f | \
-  xargs -n 1 sed -i -e 's"^#!/usr/bin/env ruby"#!/usr/bin/ruby"'
-
-find %{buildroot}%{gem_instdir}/benchmark -type f | \
-  xargs -n 1 sed -i  -e '/^#!\/usr\/bin\/env ruby/d'
+%{?scl:scl enable %{scl} - << \EOF}
+find %{buildroot}%{gem_instdir}/ -type f | \
+  xargs -n 1 sed -i -e "s|^#\!/usr/bin/env ruby|#\!`which ruby`|"
+%{?scl:EOF}
 
 %check
 %{?scl:scl enable %{scl} - << \EOF}
@@ -128,6 +126,9 @@ popd
 %{gem_docdir}
 
 %changelog
+* Wed Mar 02 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-13
+- Fix shebang path replacement
+
 * Tue Feb 23 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-12
 - Enable tests
 
