@@ -8,7 +8,7 @@
 Summary: A fast and extensible eRuby implementation
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Version: 2.7.0
-Release: 14%{?dist}
+Release: 15%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.kuwata-lab.com/erubis/
@@ -128,9 +128,12 @@ popd
 %{gem_docdir}
 
 %changelog
+* Thu Apr 07 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-15
+- Fix changelog entry
+
 * Wed Apr 06 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-14
 - Make test failure fail the build
-- Allow 5 failing tests
+- Allow 3 failing tests
 
 * Wed Mar 02 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-13
 - Fix shebang path replacement
