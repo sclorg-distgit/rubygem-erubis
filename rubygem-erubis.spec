@@ -8,7 +8,7 @@
 Summary: A fast and extensible eRuby implementation
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Version: 2.7.0
-Release: 13%{?dist}
+Release: 14%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.kuwata-lab.com/erubis/
@@ -75,7 +75,8 @@ find %{buildroot}%{gem_instdir}/ -type f | \
 
 %check
 %{?scl:scl enable %{scl} - << \EOF}
-export GEM_PATH=%{buildroot}%{gem_dir}:%{gem_dir}
+set -e
+export GEM_PATH=%{buildroot}%{gem_dir}:%{gem_dir}:$GEM_PATH
 export PATH=%{buildroot}%{_bindir}:$PATH
 
 pushd .%{gem_instdir}
@@ -92,7 +93,8 @@ mv test/data/users-guide/{E,e}xample.ejava
 # https://github.com/test-unit/test-unit/issues/92
 sed -i '/^  def test_untabify2/,/^  end$/ s/^/#/' test/test-main.rb
 
-ruby -I.:lib -e "Dir.glob('./test/test-*.rb').each {|t| require t}"
+ruby -I.:lib -e "Dir.glob('./test/test-*.rb').each {|t| require t}" \
+ | grep '158 tests, 234 assertions, 3 failures, 0 errors, 0 pendings, 0 omissions'
 popd
 %{?scl:EOF}
 
@@ -126,6 +128,10 @@ popd
 %{gem_docdir}
 
 %changelog
+* Wed Apr 06 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-14
+- Make test failure fail the build
+- Allow 5 failing tests
+
 * Wed Mar 02 2016 Pavel Valena <pvalena@redhat.com> - 2.7.0-13
 - Fix shebang path replacement
 
